@@ -25,31 +25,28 @@ form.addEventListener('submit', (event) => {
     };
     transactions.push(transaction);
     console.log(transactions);
-    renderTransactions();
-    updateSummary();
+    refreshUI();
 
     form.reset();
 });
 
 function renderTransactions() {
-    let html = '';
-
-    transactions.forEach(transaction => {
-        html += `
+    list.innerHTML = transactions
+        .map(transaction => `
             <div class="transaction">
                 <span>
-                ${transaction.description}
-                -
-                ${transaction.amount}
-                -
-                ${transaction.type}
+                    ${transaction.description}
+                    -
+                    ${transaction.amount}
+                    -
+                    ${transaction.type}
                 </span>
-                <button data-transaction-id="${transaction.id}">Delete</button>
-            </div>
-        `;
-    });
 
-    list.innerHTML = html;
+                <button data-transaction-id="${transaction.id}">
+                    Delete
+                </button>
+            </div>
+        `).join('');
 }
 
 function updateSummary() {
@@ -75,5 +72,22 @@ function updateSummary() {
 }
 
 list.addEventListener('click', (event) => {
-    if (event.target.tagName === 'BUTTON') console.log('BUTTON');
+    if (event.target.tagName !== 'BUTTON') return;
+
+    const id = Number(event.target.dataset.transactionId);
+
+    const index = transactions.findIndex(
+        transaction => transaction.id === id
+    );
+
+    if (index !== -1) {
+        transactions.splice(index, 1);
+
+        refreshUI();
+    }
 });
+
+function refreshUI() {
+    renderTransactions();
+    updateSummary();
+}
