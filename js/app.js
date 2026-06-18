@@ -1,4 +1,4 @@
-const transactions = [];
+let transactions = [];
 
 const form = document.getElementById('transaction-form');
 const description = form.querySelector('#description');
@@ -24,10 +24,28 @@ form.addEventListener('submit', (event) => {
         type: type.value
     };
     transactions.push(transaction);
+    saveTransactions();
     console.log(transactions);
     refreshUI();
 
     form.reset();
+});
+
+list.addEventListener('click', (event) => {
+    if (event.target.tagName !== 'BUTTON') return;
+
+    const id = Number(event.target.dataset.transactionId);
+
+    const index = transactions.findIndex(
+        transaction => transaction.id === id
+    );
+
+    if (index !== -1) {
+        transactions.splice(index, 1);
+
+        saveTransactions();
+        refreshUI();
+    }
 });
 
 function renderTransactions() {
@@ -71,23 +89,22 @@ function updateSummary() {
     //console.log(mySummary.balance);
 }
 
-list.addEventListener('click', (event) => {
-    if (event.target.tagName !== 'BUTTON') return;
-
-    const id = Number(event.target.dataset.transactionId);
-
-    const index = transactions.findIndex(
-        transaction => transaction.id === id
-    );
-
-    if (index !== -1) {
-        transactions.splice(index, 1);
-
-        refreshUI();
-    }
-});
-
 function refreshUI() {
     renderTransactions();
     updateSummary();
 }
+
+function saveTransactions() {
+    localStorage.setItem('transactions', JSON.stringify(transactions));
+}
+
+function loadTransactions() {
+    const savedTransactions = localStorage.getItem('transactions');
+
+    if (savedTransactions) {
+        transactions = JSON.parse(savedTransactions);
+    }
+}
+
+loadTransactions();
+refreshUI();
