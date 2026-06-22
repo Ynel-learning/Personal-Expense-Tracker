@@ -1,98 +1,110 @@
 let transactions = [];
 
-const form = document.getElementById('transaction-form');
-const description = form.querySelector('#description');
-const amount = form.querySelector('#amount');
-const type = form.querySelector('#type');
-const transactionList = document.getElementById('transaction-list');
-const list = transactionList.querySelector('#list');
+const descInput   = document.getElementById('description');
+const amountInput = document.getElementById('amount');
+const typeSelect  = document.getElementById('type');
+const addBtn      = document.getElementById('add-btn');
+const listEl      = document.getElementById('list');
+const incomeEl    = document.getElementById('income');
+const expenseEl   = document.getElementById('expense');
+const balanceEl   = document.getElementById('balance');
 
-const summary = document.getElementById('transaction-summary');
-const summaryList = summary.querySelector('#summary');
-const income = summaryList.querySelector('#income');
-const expense = summaryList.querySelector('#expense');
-const balance = summaryList.querySelector('#balance');
+function addTransaction() {
+    const desc   = descInput.value.trim();
+    const amount = parseFloat(amountInput.value);
+    const type   = typeSelect.value;
 
-
-form.addEventListener('submit', (event) => {
-    event.preventDefault();
-
-    const transaction = {
-        id: Date.now(),
-        description: description.value,
-        amount: Number(amount.value),
-        type: type.value
-    };
-    transactions.push(transaction);
-    saveTransactions();
-    console.log(transactions);
-    refreshUI();
-
-    form.reset();
-});
-
-list.addEventListener('click', (event) => {
-    if (event.target.tagName !== 'BUTTON') return;
-
-    const id = Number(event.target.dataset.transactionId);
-
-    const index = transactions.findIndex(
-        transaction => transaction.id === id
-    );
-
-    if (index !== -1) {
-        transactions.splice(index, 1);
-
-        saveTransactions();
-        refreshUI();
+    if (!desc || isNaN(amount) || amount <= 0) {
+        // Simple validation — could be replaced with inline error messages
+        alert('Please enter a description and a valid positive amount.');
+        return;
     }
-});
 
-function renderTransactions() {
-    list.innerHTML = transactions
-        .map(transaction => `
-            <div class="transaction">
-                <span>
-                    ${transaction.description}
-                    -
-                    ${transaction.amount}
-                    -
-                    ${transaction.type}
-                </span>
+    const now = new Date();
+    const date = now.toLocaleDateString('en-PH', { month: 'short', day: 'numeric' });
 
-                <button data-transaction-id="${transaction.id}">
-                    Delete
-                </button>
-            </div>
-        `).join('');
-}
-
-function updateSummary() {
-    let totalIncome = 0;
-    let totalExpense = 0;
-
-    transactions.forEach(transaction => {
-        if (transaction.type === 'Expense') {
-            totalExpense += transaction.amount;
-        }
-        else {
-            totalIncome += transaction.amount;
-        }
+    transactions.unshift({
+        id: Date.now(),
+        desc,
+        amount,
+        type,
+        date,
     });
-    
-    const totalBalance = totalIncome - totalExpense;
 
-    income.textContent = totalIncome;
-    expense.textContent = totalExpense;
-    balance.textContent = totalBalance;
+    // Clear the inputs after adding
+    descInput.value  = '';
+    amountInput.value = '';
+    descInput.focus();
 
-    //console.log(mySummary.balance);
+    saveTransactions();
+
+    render();
 }
 
-function refreshUI() {
-    renderTransactions();
-    updateSummary();
+function formatCurrency(amount) {
+    return '₱' + amount.toLocaleString('en-PH', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
 }
+
+function renderList() {
+    if (transactions.length === 0) {
+        listEl.innerHTML = '<p class="empty-state">No transactions yet. Add one above.</p>';
+        return;
+    }
+
+    listEl.innerHTML = transactions.map(t => {
+        const isIncome  = t.type === 'Income';
+        const iconClass = isIncome ? 'income' : 'expense';
+        const icon      = isIncome ? '↓' : '↑';
+        const sign      = isIncome ? '+' : '−';
+
+        return `
+            <div class="tx-item" data-id="${t.id}">
+                <div class="tx-icon ${iconClass}">${icon}</div>
+                <div class="tx-desc">
+                    <div class="name">${t.desc}</div>
+                    <div class="date">${t.date}</div>
+                </div>
+                <span class="tx-amount ${iconClass}">${sign}${formatCurrency(t.amount)}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+
+function renderSummary() {
+    const income  = transactions
+        .filter(t => t.type === 'Income')
+        .reduce((sum, t) => sum + t.amount, 0);
+
+    const expense = transactions
+        .filter(t => t.type === 'Expense')
+        .reduce((sum, t) => sum + t.amount, 0);
+
+    const balance = income - expense;
+
+    incomeEl.textContent  = formatCurrency(income);
+    expenseEl.textContent = formatCurrency(expense);
+    balanceEl.textContent = formatCurrency(balance);
+
+    // Positive balance = green, negative = red
+    balanceEl.style.color = balance >= 0 ? '#3B6D11' : '#A32D2D';
+}
+
+
+function render() {
+    renderList();
+    renderSummary();
+}
+
+
+addBtn.addEventListener('click', addTransaction);
+
+// Allow pressing Enter in any input to trigger add
+descInput.addEventListener('keydown', e => { if (e.key === 'Enter') addTransaction(); });
+amountInput.addEventListener('keydown', e => { if (e.key === 'Enter') addTransaction(); });
 
 function saveTransactions() {
     localStorage.setItem('transactions', JSON.stringify(transactions));
@@ -107,4 +119,4 @@ function loadTransactions() {
 }
 
 loadTransactions();
-refreshUI();
+render();

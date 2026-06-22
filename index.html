@@ -3,43 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Personal Finance Tracker</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <form id="transaction-form">
-        <div>
-            <label for="description">Description:</label>
-            <input id="description" name="description">
+    <div class="app">
+
+        <!-- CHANGED: wrapped everything in .app for max-width centering -->
+        <!-- CHANGED: h1 now has class "app-title" and an icon span -->
+        <h1 class="app-title">
+            <span class="title-icon">₱</span>
+            Personal Finance Tracker
+        </h1>
+
+        <!-- CHANGED: wrapped form in a .card div for the bordered card look -->
+        <div class="card">
+            <!-- CHANGED: removed <form> tag to prevent page reload on button click -->
+            <!-- ORIGINAL had a bare <form id="transaction-form"> -->
+            <div class="form-group full-width">
+                <label for="description">Description</label>
+                <input id="description" name="description" placeholder="e.g. Grocery run">
+            </div>
+
+            <!-- CHANGED: amount + type now sit in a .form-row grid (side by side) -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="amount">Amount</label>
+                    <input type="number" id="amount" name="amount" step="any" placeholder="0.00">
+                </div>
+
+                <div class="form-group">
+                    <label for="type">Type</label>
+                    <select id="type" name="type">
+                        <option value="Income">Income</option>
+                        <option value="Expense">Expense</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- CHANGED: button has type="button" to prevent form submission behavior -->
+            <button type="button" id="add-btn" class="btn-add">+ Add Transaction</button>
         </div>
 
-        <div>
-            <label for="amount">Amount:</label>
-            <input type="number" id="amount" name="amount" step="any">
+        <!-- CHANGED: replaced bare <p id="list-header"> with a semantic .section-label -->
+        <div class="section">
+            <p class="section-label">Recent Transactions</p>
+            <!-- CHANGED: kept #list but added .transaction-list class for styling -->
+            <div id="list" class="transaction-list">
+                <!-- JS will render items here -->
+                <p class="empty-state">No transactions yet. Add one above.</p>
+            </div>
         </div>
 
-        <div>
-            <label>Type:</label>
-            <select id="type" name="type">
-                <option value="Income">Income</option>
-                <option value="Expense">Expense</option>
-            </select>
-        </div>
-        <button>Add Transaction</button>
-    </form>
+        <hr class="divider">
 
-    <div id="transaction-list">
-        <p>This is the Transaction List</p>
-        <div id="list"></div>
-    </div>
-    <hr>
-    <div id="transaction-summary">
-        Transaction Summary
-        <div id="summary">
-            <p>Income: <span id="income">0</span></p>
-            <p>Expense: <span id="expense">0</span></p>
-            <p>Balance: <span id="balance">0</span></p>
+        <!-- CHANGED: replaced bare <p id="trans-sum"> with .section-label -->
+        <div class="section">
+            <p class="section-label">Summary</p>
+
+            <!-- CHANGED: summary items now sit in a .summary-grid instead of stacked <p> tags -->
+            <div id="summary" class="summary-grid">
+                <div class="stat income">
+                    <p class="stat-label">Income</p>
+                    <p class="stat-value" id="income">₱0</p>
+                </div>
+                <div class="stat expense">
+                    <p class="stat-label">Expenses</p>
+                    <p class="stat-value" id="expense">₱0</p>
+                </div>
+                <div class="stat">
+                    <p class="stat-label">Balance</p>
+                    <p class="stat-value" id="balance">₱0</p>
+                </div>
+            </div>
         </div>
-    </div>
+
+    </div><!-- end .app -->
+
     <script type="module" src="js/app.js"></script>
 </body>
 </html>

@@ -1,0 +1,377 @@
+/* ============================================================
+   RESET & BASE
+   Removes browser default spacing so we control everything.
+   box-sizing: border-box makes padding/border included in width
+   so elements don't unexpectedly overflow their containers.
+   ============================================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f5f4f9;   /* very light purple-gray page background */
+    color: #1a1a2e;              /* near-black with a slight blue tint for text */
+    min-height: 100vh;
+    padding: 2rem 1rem;
+}
+
+/* ============================================================
+   APP WRAPPER
+   max-width caps the layout so it never looks stretched on
+   wide screens. margin: 0 auto centers it horizontally.
+   ============================================================ */
+.app {
+    max-width: 540px;
+    margin: 0 auto;
+}
+
+
+/* ============================================================
+   APP TITLE
+   flex + align-items: center lines the icon and text on the
+   same baseline. margin-bottom pushes the form card away.
+   ============================================================ */
+.app-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* The ₱ symbol acts as a visual icon anchor for the title */
+.title-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: #3C3489;   /* deep purple — the primary brand color */
+    color: #CECBF6;              /* light purple tint — readable on dark bg */
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+
+/* ============================================================
+   CARD
+   The white bordered box that wraps the form.
+   border: 1px solid gives structure without feeling heavy.
+   border-radius: 14px gives the soft modern corner look.
+   ============================================================ */
+.card {
+    background: #ffffff;
+    border: 1px solid #e4e2f0;
+    border-radius: 14px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+
+/* ============================================================
+   FORM GROUPS & LABELS
+   flex-direction: column stacks the label above the input.
+   gap: 5px adds a small space between label and input.
+   ============================================================ */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 1rem;
+}
+
+/* full-width makes the Description field span both columns */
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6b6b8a;    /* muted purple-gray — less dominant than the input text */
+}
+
+/* ============================================================
+   FORM ROW
+   Two-column grid puts Amount and Type side by side.
+   This groups them visually since they describe one thing.
+   ============================================================ */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+
+/* ============================================================
+   INPUTS & SELECT
+   Consistent styling across all form controls.
+   border-radius: 8px gives them a slightly rounded look.
+   outline: none removes the default browser focus ring —
+   we replace it with our own box-shadow on :focus.
+   ============================================================ */
+input,
+select {
+    width: 100%;
+    padding: 9px 12px;
+    font-size: 14px;
+    color: #1a1a2e;
+    background-color: #f9f8fc;   /* very faint purple tint on the input background */
+    border: 1px solid #e4e2f0;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+
+input::placeholder {
+    color: #b0aec8;
+}
+
+/* On focus, the border darkens to signal active state */
+input:focus,
+select:focus {
+    border-color: #7F77DD;   /* mid-purple from the brand palette */
+}
+
+
+/* ============================================================
+   ADD BUTTON
+   width: 100% makes it span the full card width — it's the
+   primary action so it should be prominent.
+   The filled purple background makes it stand out from inputs.
+   ============================================================ */
+.btn-add {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    background-color: #3C3489;   /* deep purple */
+    color: #CECBF6;              /* light purple text — on-brand, not plain white */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    margin-top: 0.25rem;
+}
+
+.btn-add:hover {
+    background-color: #26215C;   /* darker purple on hover — clear feedback */
+}
+
+.btn-add:active {
+    transform: scale(0.98);      /* subtle press-down feel on click */
+}
+
+
+/* ============================================================
+   SECTION & SECTION LABEL
+   .section adds breathing room between page regions.
+   .section-label styles the small uppercase headings that
+   introduce each block — uppercase + letter-spacing makes
+   small text feel like a proper label rather than body copy.
+   ============================================================ */
+.section {
+    margin-bottom: 1.5rem;
+}
+
+.section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #9998b5;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 0.75rem;
+}
+
+
+/* ============================================================
+   TRANSACTION LIST
+   flex + column stacks each item with consistent gap between them.
+   ============================================================ */
+.transaction-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Empty state message shown when there are no transactions */
+.empty-state {
+    font-size: 13px;
+    color: #b0aec8;
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+
+/* ============================================================
+   TRANSACTION ITEM
+   Each row is a flex container: icon | description | amount.
+   align-items: center keeps everything vertically middle-aligned.
+   ============================================================ */
+.tx-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: #ffffff;
+    border: 1px solid #e4e2f0;
+    border-radius: 10px;
+    transition: border-color 0.15s ease;
+}
+
+.tx-item:hover {
+    border-color: #c4c2e0;   /* slightly darker border on hover — subtle feedback */
+}
+
+/* ============================================================
+   TRANSACTION ICON CIRCLE
+   The circle uses border-radius: 50% to become a perfect circle.
+   flex-shrink: 0 prevents it from squishing when text is long.
+   The income/expense variants change the background and icon color.
+   ============================================================ */
+.tx-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.tx-icon.income {
+    background-color: #EAF3DE;  /* green 50 — very light fill */
+    color: #3B6D11;             /* green 800 — dark enough to read on light bg */
+}
+
+.tx-icon.expense {
+    background-color: #FCEBEB;  /* red 50 */
+    color: #A32D2D;             /* red 800 */
+}
+
+
+/* ============================================================
+   TRANSACTION DESCRIPTION
+   flex: 1 makes this middle column take up all leftover space,
+   pushing the amount to the far right.
+   ============================================================ */
+.tx-desc {
+    flex: 1;
+    min-width: 0;    /* prevents long text from breaking the flex layout */
+}
+
+.tx-desc .name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a2e;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;   /* "..." if the name is too long */
+}
+
+.tx-desc .date {
+    font-size: 12px;
+    color: #9998b5;
+    margin-top: 1px;
+}
+
+
+/* ============================================================
+   TRANSACTION AMOUNT
+   font-weight: 500 makes the number stand out.
+   Color changes based on income/expense class.
+   ============================================================ */
+.tx-amount {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.tx-amount.income {
+    color: #3B6D11;  /* green — money coming in */
+}
+
+.tx-amount.expense {
+    color: #A32D2D;  /* red — money going out */
+}
+
+
+/* ============================================================
+   DIVIDER
+   A thin horizontal rule to separate transactions from summary.
+   border: none removes the default browser <hr> border, then
+   border-top: 1px adds just the top line we want.
+   ============================================================ */
+.divider {
+    border: none;
+    border-top: 1px solid #e4e2f0;
+    margin: 1.5rem 0;
+}
+
+
+/* ============================================================
+   SUMMARY GRID
+   Three equal columns — one for each stat.
+   The background-color is a faint gray-purple ("recessed" feel)
+   which visually separates the summary from the list above.
+   ============================================================ */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.stat {
+    background-color: #f0effe;  /* very light purple tint — distinct from white */
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #9998b5;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a2e;   /* default — overridden by .income / .expense */
+}
+
+/* income and expense stat cards get color-coded values */
+.stat.income .stat-value {
+    color: #3B6D11;
+}
+
+.stat.expense .stat-value {
+    color: #A32D2D;
+}
+
+/* Balance color is set dynamically by JS based on positive/negative value */
+
+
+/* ============================================================
+   RESPONSIVE — narrow screens
+   Below 400px, the two-column form row stacks vertically so
+   Amount and Type don't get too squished.
+   The summary grid also becomes 1 column to avoid tiny cards.
+   ============================================================ */
+@media (max-width: 400px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+}
