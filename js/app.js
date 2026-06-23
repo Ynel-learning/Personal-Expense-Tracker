@@ -68,6 +68,7 @@ function renderList() {
                     <div class="date">${t.date}</div>
                 </div>
                 <span class="tx-amount ${iconClass}">${sign}${formatCurrency(t.amount)}</span>
+                <button class="remove-btn">Remove</button>
             </div>
         `;
     }).join('');
@@ -105,6 +106,19 @@ addBtn.addEventListener('click', addTransaction);
 // Allow pressing Enter in any input to trigger add
 descInput.addEventListener('keydown', e => { if (e.key === 'Enter') addTransaction(); });
 amountInput.addEventListener('keydown', e => { if (e.key === 'Enter') addTransaction(); });
+
+listEl.addEventListener('click', (e) => {
+
+    if(e.target.classList.contains('remove-btn')) {
+        const txItem = e.target.closest('.tx-item');
+        const id = Number(txItem.dataset.id);
+
+        transactions = transactions.filter(t => t.id !== id);
+
+        saveTransactions();
+        render();
+    }
+});
 
 function saveTransactions() {
     localStorage.setItem('transactions', JSON.stringify(transactions));
