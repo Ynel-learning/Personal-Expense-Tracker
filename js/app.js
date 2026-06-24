@@ -8,6 +8,7 @@ const listEl      = document.getElementById('list');
 const incomeEl    = document.getElementById('income');
 const expenseEl   = document.getElementById('expense');
 const balanceEl   = document.getElementById('balance');
+const canvas = document.getElementById('finance-chart');
 
 function addTransaction() {
     const desc   = descInput.value.trim();
@@ -98,6 +99,7 @@ function renderSummary() {
 function render() {
     renderList();
     renderSummary();
+    loadChart();
 }
 
 
@@ -131,6 +133,30 @@ function loadTransactions() {
         transactions = JSON.parse(savedTransactions);
     }
 }
+
+let chart;
+function loadChart() {
+    const labels = transactions.map(t => t.desc);
+    const amounts = transactions.map(t => t.amount);
+    if (!chart) {
+        chart = new Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Amount',
+                    data: amounts
+                }]
+            }
+        }); 
+    }
+
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = amounts;
+
+    chart.update();
+}
+
 
 loadTransactions();
 render();
