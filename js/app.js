@@ -8,7 +8,8 @@ const listEl      = document.getElementById('list');
 const incomeEl    = document.getElementById('income');
 const expenseEl   = document.getElementById('expense');
 const balanceEl   = document.getElementById('balance');
-const canvas = document.getElementById('finance-chart');
+const canvas      = document.getElementById('finance-chart');
+const downloadCSV = document.getElementById('csv-file');
 
 function addTransaction() {
     const desc   = descInput.value.trim();
@@ -157,6 +158,30 @@ function loadChart() {
     chart.update();
 }
 
+function exportCSV() {
+    let csv = "Description,Amount,Type\n";
+
+    transactions.forEach(t => {
+        csv += `${t.desc},${t.amount},${t.type}\n`;
+    });
+
+    const blob = new Blob([csv], {
+        type: "text/csv"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = "transactions.csv";
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+downloadCSV.addEventListener('click', exportCSV);
 
 loadTransactions();
 render();
