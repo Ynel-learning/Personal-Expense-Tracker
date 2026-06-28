@@ -137,8 +137,14 @@ function loadTransactions() {
 
 let chart;
 function loadChart() {
-    const labels = transactions.map(t => t.desc);
-    const amounts = transactions.map(t => t.amount);
+    const grouped = {};
+
+    transactions.forEach(t => {
+        grouped[t.desc] = (grouped[t.desc] ?? 0) + t.amount;
+    });
+
+    const labels = Object.keys(grouped);
+    const amounts = Object.values(grouped);
     if (!chart) {
         chart = new Chart(canvas, {
             type: 'bar',
@@ -159,11 +165,15 @@ function loadChart() {
 }
 
 function exportCSV() {
-    let csv = "Description,Amount,Type\n";
+    let csv = "Description,Amount,Type,Date\n";
 
+    let total = 0;
     transactions.forEach(t => {
-        csv += `${t.desc},${t.amount},${t.type}\n`;
+        total += t.amount;
+        csv += `${t.desc},${t.amount},${t.type},${t.date}\n`;
     });
+
+    csv += 'Total: '+ total;
 
     const blob = new Blob([csv], {
         type: "text/csv"
